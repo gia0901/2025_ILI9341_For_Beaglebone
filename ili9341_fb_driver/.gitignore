@@ -1,0 +1,10 @@
+# VSCode settings
+.vscode/
+
+# Build artifacts
+*.mod*
+*.cmd
+*.ko
+*.o
+*.symvers
+*.order
