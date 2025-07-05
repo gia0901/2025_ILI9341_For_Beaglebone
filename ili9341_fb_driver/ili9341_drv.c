@@ -33,6 +33,14 @@ static struct fb_ops ili9341_fbops = {
     .fb_imageblit = sys_imageblit,
 };
 
+
+
+static int ili9341_init_display(struct spi_device *spi)
+{
+    return 0;
+}
+
+
 /**
  * @brief   Probe function for the driver
  * @note    Initialize the driver's necessary settings:
@@ -84,7 +92,7 @@ static int ili9341_remove(struct spi_device *spi)
 {
     unregister_framebuffer(ili9341_fb_info);
     vfree(video_buffer);
-    framebuffer_release(ili9341_info);
+    framebuffer_release(ili9341_fb_info);
     return 0;
 }
 
