@@ -1,0 +1,33 @@
+/ {
+    ili9341_spi: ili9341@0 {
+        compatible = "gia,ili9341";
+        reg = <0>;  // CS0 ?
+
+        spi-max-frequency = <32000000>; // 32 MHz
+
+        dc-gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>;
+        reset-gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
+
+        rotate = <0>;
+        bgr = <1>;
+        status = "okay";
+    };
+};
+
+&am33xx_pinmux {
+    spi1_pins: pinmux_spi1_pins {
+        pinctrl-single,pins = <
+            
+        >;
+    };
+};
+
+&spi1 {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&spi1_pins>;
+
+    ili9341_spi: ili9341@0 {
+        status = "okay";
+    };
+};

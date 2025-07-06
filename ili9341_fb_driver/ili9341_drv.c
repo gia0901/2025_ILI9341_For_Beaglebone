@@ -37,6 +37,41 @@ static struct fb_ops ili9341_fbops = {
 
 static int ili9341_init_display(struct spi_device *spi)
 {
+    u8 buf[2];
+
+    // 1. Software reset (0x01)
+    buf[0] = 0x01;  // Cmd: reset
+    spi_write(spi, buf, 1);
+    mdelay(150);
+
+    // 2. Sleep out (0x11)
+    buf[0] = 0x11;
+    spi_write(spi, buf, 1);
+
+    // 3. Display ON (0x29)
+    buf[0] = 0x29;
+    spi_write(spi, buf, 1);
+
+    // 4. Configure resolution & color format
+    buf[0] = 0x3A;  // Cmd: Set pixel format
+    buf[1] = 0x55;  // Data; RGB565
+    spi_write(spi, buf, 2);
+
+    // 5. Configure Address window
+    buf[0] = 0x2A;  // Cmd: Set column address
+    buf[1] = 0x00;
+    spi_write(spi, buf, 2); // Set start column
+    buf[1] = 0xEF;
+    spi_write(spi, buf, 2); // Set end column
+
+    buf[0] = 0x2B;
+    buf[1] = 0x00;
+    spi_write(spi, buf, 2); // Set start row
+    buf[1] = 0xFF;
+    spi_write(spi, buf, 2); // Set end row
+
+    // 6. Others
+
     return 0;
 }
 
@@ -50,12 +85,13 @@ static int ili9341_probe(struct spi_device *spi)
 {
     int ret;
 
-    /* Allocate the framebuffer */
+    /* Allocate the framebuffer dynamically */
     ili9341_fb_info = framebuffer_alloc(0, &spi->dev);
     if (!ili9341_fb_info)
         return -ENOMEM;
     
-    video_buffer = vzalloc(LCD_WIDTH * LCD_HEIGHT * 2); /* RGB565 */
+    /* Allocate video buffer */
+    video_buffer = vzalloc(LCD_WIDTH * LCD_HEIGHT * 2); /* RGB565 = 16 bits = 2 bytes */
     if (!video_buffer)
         return -ENOMEM;
     
